@@ -1,0 +1,21 @@
+{
+  "name": "fend-p5-map-ver2.0",
+  "description": "",
+  "main": "",
+  "authors": [
+    "Morlac"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.6",
+    "knockout": "^3.4.0"
+  }
+}

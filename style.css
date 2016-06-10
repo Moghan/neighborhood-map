@@ -1,0 +1,121 @@
+* {
+	box-sizing: border-box;
+}
+
+html, body {
+	padding: 0;
+	margin: 0;
+	background: #FAFAFA;
+	font-family: Arial, sans-serif;
+}
+
+
+
+.map_container {
+    /*position: relative;*/
+    width: 100%;
+    /*padding-bottom: 56.25%;  Ratio 16:9 ( 100%/16*9 = 56.25% ) */
+
+}
+
+.map_container .map_canvas {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.side-nav {
+	position: fixed;
+	top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    z-index: 50;
+
+	/*height: 100%;*/
+	width: 300px;
+	max-width: 90%;
+	/*background: red;*/
+	/*opacity: 0.2;*/
+}
+
+.side-nav_content {
+    display: block;
+}
+
+.btn-location {
+    width: 100%;
+    opacity: 0.5;
+}
+
+.btn-location:hover {
+    color: red;
+    opacity: 1;
+}
+
+.location-info {
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 90;
+    width: 300px;
+
+    /*height: 100vh;*/
+    /*bottom: 30px;*/
+    /*max-width: 90%;*/
+    /*background: #FFF;*/
+    /*overflow-y: auto;*/
+}
+
+.location-info_content {
+    /*position: fixed;*/
+    /*height: 100vh;*/
+    width: auto;
+    /*bottom: 30px;*/
+    overflow-y: hidden;
+    background: #FFF;
+    /*overflow-x: scroll;*/
+}
+
+.location-info_content_wiki {
+    margin: 5px 10px;
+    /*position: absolute;*/
+    width: auto;
+    /*top: 230px;*/
+    /*bottom: 0;*/
+    /*height: auto;*/
+    overflow-y: auto;
+}
+
+.location-info_hide-toggle {
+
+    position: absolute;
+    top: 0;
+    right: 0;
+    opacity: 0.7;
+}
+
+.hide {
+    display: none;
+}
+
+.location-info_content_flickr-img img {
+    /*margin: 0;*/
+    width: 100%;
+}
+
+
+@media screen and (max-width: 768px) {
+	
+}
+
+@media screen and (min-width: 769px){
+	
+}
+

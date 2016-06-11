@@ -11,29 +11,23 @@ The project repo is available at TODO
 Have a look at the neighborhood-map sight at TODO
 
 ## Getting started
+Install the bower-modules listed as dependencies in the bower.json file into the project folder. At the moment they are the following.
+* knockout
+* bootstrap
+(Check out the awesomeness of Bower at https://bower.io/)
+
 Publish on your website,
 
 or run on a local server using Python and ngrok.
-
 ```bash
   $> cd /path/to/your-project-folder
   $> python -m http.server 8080
   ```
-
 ``` bash
   $> cd /path/to/your-project-folder
   $> ngrok http 8080
   ```
 
-## Build the project
-
-In your project folder:
-
-Install the bower-modules listed as dependencies in the bower.json file into the project folder. At the moment they are the following.
-* knockout
-* bootstrap
-
-Check out the awesomeness of Bower at https://bower.io/
 
 ## License
 MIT

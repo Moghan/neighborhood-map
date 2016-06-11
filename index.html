@@ -40,7 +40,7 @@
         <input id="input-search" type="text" placeholder="search" class="form-control",  data-bind="textInput: searchString">
       </div>
       <div class="side-nav_content" data-bind="foreach: viewModel.locations">
-        <button type="button" class="btn btn-default btn-location" data-bind="text: title, style: { display: show() ? '' : 'none'}, event: { click: $parent.locationButton_onClick }"></button>
+        <button type="button" class="btn btn-default btn-location" data-bind="text: title, style: { display: show() ? '' : 'none'}, event: { click: $parent.locationButton_onClick , mouseover: $parent.mouseOver , mouseout: $parent.mouseOut }"></button>
       </div>
     </div>
   </aside>
@@ -49,7 +49,7 @@
     <div class="location-info_content" data-bind="style: { display: viewModel.currLocation() !== null ? '' : 'none'}">
       <div class="location-info_content_flickr-img">
         <button class="js-info-toggle-btn location-info_hide-toggle material-icons" data-bind="event: { click: hideLocationInfo }">close</button>
-        <img id="flickr-img" src="" alt="">
+        <img id="flickr-img" src="" alt="some image from flickr">
       </div>
       <div id="content-wiki-ID" class="location-info_content_wiki"></div>
     </div>

@@ -1,3 +1,9 @@
+'use strict'
+
+var CONST = {
+  url_locations : 'locations.json'
+}
+
 var el_flickrImg = document.getElementById('flickr-img');
 var el_infoContent = document.getElementById('location-info-ID');
 var el_infoContentWiki = document.getElementById('content-wiki-ID');
@@ -16,25 +22,21 @@ class ViewModel {
 // Loads the locations.json file and push each loaction into an array of (location-)items
 // An item also stores data for controlling the google-map-marker for each location.
   init () {
-    //console.log('loadLocations');
-    var url = "locations.json";
-
     var loadRequestTimeout = setTimeout(function() {
       console.log('failed to get AJAX resources');
-    }, 4000);
+    }, 2000);
 
     var Item = function(data) {
       this.lat =  data.lat;
       this.lng = data.lng;
       this.title = data.title;
-      this.wikiTitle = data.wikiTitle;
+      this.wikiPage = data.wikiPage;
       this.description = data.description;
       this.url = data.url;
       this.isFocused = ko.observable(false);
        
       this.marker = new google.maps.Marker({
                           map: map,
-                          animation: google.maps.Animation.BOUNCE,
                           title: this.title,
                           position: {lat: parseFloat(this.lat), lng: parseFloat(this.lng)}
                         });
@@ -45,7 +47,7 @@ class ViewModel {
     }
    
     $.ajax({
-      url: url,
+      url: CONST.url_locations,
       dataType: "json",
       success: function(response) {
         var arr = response.map(function(item) { return new Item(item); });
@@ -54,13 +56,20 @@ class ViewModel {
         clearTimeout(loadRequestTimeout);
       }
     });
-    
-    
+
+  }
+
+  mouseOver (location) {
+    location.marker.setAnimation(google.maps.Animation.BOUNCE);
+  }
+
+  mouseOut (location) {
+    if(location !== viewModel.currLocation())
+      location.marker.setAnimation(null);
   }
 
   loadFlickrImg (setId, picId) {
     var self = this;
-    // console.log('loadFlickrImg');
 
     var URL = "https://api.flickr.com/services/rest/" + 
     "?method=flickr.galleries.getPhotos" +
@@ -69,18 +78,18 @@ class ViewModel {
     "&format=json" +
     "&nojsoncallback=1";
 
-    var _URL = "https://api.flickr.com/services/rest/?method=flickr.galleries.getPhotos&api_key=35ea935c9632cde77aec12c324007f6d&gallery_id=72157663756796363&format=json&nojsoncallback=1";
-
     $.getJSON(URL, function(data) {
       $.each(data.photos.photo, function(i, item) {
         var img_src = "http://farm" + item.farm + ".static.flickr.com/" +
           item.server + "/" + item.id + "_" + item.secret + "_n.jpg";
           if(item.id == picId) {
             el_flickrImg.src = img_src;
-            self.waitForAllResourcesAndShowLocationInfo()
           }
       });
-    });
+    })
+    .error( function () { el_flickrImg.alt = 'failed to get wikipedia resources' })
+    .success( function () { el_flickrImg.alt = 'image from flickr' })
+    .complete( function () { self.waitForAllResourcesAndShowLocationInfo() });
 
   }
 
@@ -104,34 +113,30 @@ class ViewModel {
   locationButton_onClick  () {
     var self = this;
 
-    // Current location clicked hides the info-content element
+    // Current location clicked again hides the info-content element
     if(viewModel.currLocation() === self) {
       el_infoContent.classList.toggle('hide');
       viewModel.currLocation(null);
     }
-    // Else new current is set and info-content displayed
+    // Else new current location is set and resources called for
     else {
       viewModel.currLocation(self);
-      viewModel.loadData_Wiki(self);
+      viewModel.loadData_Wiki(self.wikiPage);
       viewModel.loadFlickrImg(self.flickrImg.album, self.flickrImg.imgId);
     }
   }
 
   
-  loadData_Wiki (clickedLocationBtn) {
+  loadData_Wiki (wikiPage) {
     var self = this;
-      // console.log('loadData_Wiki');
-      var wikiurl = 'https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=' + clickedLocationBtn.wikiTitle;
+      var wikiurl = 'https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=' + wikiPage;
       var $wikiElem = $('.location-info_content_wiki');
-
-      var wikiRequestTimeout = setTimeout(function() {
-          $wikiElem.text('failed to get wikipedia resources');
-          self.waitForAllResourcesAndShowLocationInfo();
-      }, 2000);
 
       function addWikiToDom(wikiData) {
         var pages = wikiData.query.pages;
         var propertyNames = Object.keys(pages);
+        // The page name is its pageid, which is more or less unknown until runtime.
+        // Since only one page is in the response its allways on position [0]
         $wikiElem.text(pages[propertyNames[0]].extract);
       }
 
@@ -140,13 +145,17 @@ class ViewModel {
           dataType: "jsonp",
           success: function(response) {
               addWikiToDom(response);
-              clearTimeout(wikiRequestTimeout);
-              self.waitForAllResourcesAndShowLocationInfo();
+          },
+          error: function() { 
+            $wikiElem.text('failed to get wikipedia resources');
+          },
+          complete: function() {
+            self.waitForAllResourcesAndShowLocationInfo();
           }
       });
   }
 
-  // Calculate max-height of the info-content element 
+  // set max-height of the location-info_content-wiki element so it does not exceed the viewport
   setElementHeights () {
      var imgHeight = el_flickrImg.height;
      var screenSize = document.documentElement.clientHeight;

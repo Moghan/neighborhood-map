@@ -1,4 +1,4 @@
-# frontend-nanodegree-mobile-portfolio
+# neighborhood-map
 
 This is project 5 in my Front-End Developer Nanodegree program.
 

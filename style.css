@@ -27,13 +27,11 @@ html, body {
 .side-nav {
 	position: fixed;
 	top: 0;
-    right: 0;
-    bottom: 0;
     left: 0;
     margin: 0;
     padding: 0;
     z-index: 50;
-	width: 300px;
+	width: 240px;
 	max-width: 90%;
 }
 
@@ -43,7 +41,7 @@ html, body {
 
 .btn-location {
     width: 100%;
-    opacity: 0.5;
+    opacity: 0.65;
 }
 
 .btn-location:hover {
@@ -56,7 +54,7 @@ html, body {
     right: 0;
     top: 0;
     z-index: 90;
-    width: 300px;
+    width: 320px;
 }
 
 .location-info_content {

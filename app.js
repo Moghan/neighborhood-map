@@ -19,7 +19,12 @@ class ViewModel {
     this.addEventListeners();
   }
 
-// Loads the locations.json file and push each loaction into an array of (location-)items
+  addEventListeners () {
+    window.addEventListener('resize', this.onResizeWindow);
+  }
+
+
+// Loads the locations.json file and push each loaction into an ko.observableArray of (location-)items
 // An item also stores data for controlling the google-map-marker for each location.
   init () {
     var loadRequestTimeout = setTimeout(function() {
@@ -40,12 +45,16 @@ class ViewModel {
                           title: this.title,
                           position: {lat: parseFloat(this.lat), lng: parseFloat(this.lng)}
                         });
+      // When searchString changes, this computed observable sets true or false depending on if searchString exist in location title
       this.show = ko.computed(function(){ return this.title.toLowerCase().indexOf(viewModel.searchString().toLowerCase()) >-1; }, this);
+      // When this.show changes, this computed observable hides or shows the locations google-map-marker
       this.showMarker = ko.computed(function(){ this.show() ? this.marker.setMap(map) : this.marker.setMap(null)}, this);
+      // This computed observable makes the current locations map-marker bounce
       this.animateMarker = ko.computed( function(){ viewModel.currLocation() === this ? this.marker.setAnimation(google.maps.Animation.BOUNCE) : this.marker.setAnimation(null)}, this);
       this.flickrImg = data.flickrImg;
     }
    
+    // Loads locations from JSON-file, and map locations to items that are put in an observableArray
     $.ajax({
       url: CONST.url_locations,
       dataType: "json",
@@ -59,13 +68,33 @@ class ViewModel {
 
   }
 
-  mouseOver (location) {
-    location.marker.setAnimation(google.maps.Animation.BOUNCE);
-  }
+  loadData_Wiki (wikiPage) {
+    var self = this;
 
-  mouseOut (location) {
-    if(location !== viewModel.currLocation())
-      location.marker.setAnimation(null);
+    var wikiurl = 'https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=' + wikiPage;
+    var $wikiElem = $('.location-info_content_wiki');
+
+    function addWikiToDom(wikiData) {
+      var pages = wikiData.query.pages;
+      var propertyNames = Object.keys(pages);
+      // The page name is its pageid, which is more or less unknown until runtime.
+      // Since only one page is in the response its allways on position [0]
+      $wikiElem.text(pages[propertyNames[0]].extract);
+    }
+
+    $.ajax({
+        url: wikiurl,
+        dataType: "jsonp",
+        success: function(response) {
+            addWikiToDom(response);
+        },
+        error: function() { 
+          $wikiElem.text('failed to get wikipedia resources');
+        },
+        complete: function() {
+          self.waitForAllResourcesAndShowLocationInfo();
+        }
+    });
   }
 
   loadFlickrImg (setId, picId) {
@@ -79,20 +108,37 @@ class ViewModel {
     "&nojsoncallback=1";
 
     $.getJSON(URL, function(data) {
-      $.each(data.photos.photo, function(i, item) {
-        var img_src = "http://farm" + item.farm + ".static.flickr.com/" +
-          item.server + "/" + item.id + "_" + item.secret + "_n.jpg";
+      if(data.stat === 'ok') {
+        $.each(data.photos.photo, function(i, item) {
+          var img_src = "http://farm" + item.farm + ".static.flickr.com/" +
+            item.server + "/" + item.id + "_" + item.secret + "_n.jpg";
           if(item.id == picId) {
             el_flickrImg.src = img_src;
           }
-      });
+        });
+      }
+      else {
+        el_flickrImg.src = '';
+      }
+
     })
-    .error( function () { el_flickrImg.alt = 'failed to get wikipedia resources' })
+    .error( function () { el_flickrImg.alt = 'failed to get flickr resources'; el_flickrImg.src = '' })
     .success( function () { el_flickrImg.alt = 'image from flickr' })
     .complete( function () { self.waitForAllResourcesAndShowLocationInfo() });
 
   }
 
+
+  mouseOver (location) {
+    location.marker.setAnimation(google.maps.Animation.BOUNCE);
+  }
+
+  mouseOut (location) {
+    if(location !== viewModel.currLocation())
+      location.marker.setAnimation(null);
+  }
+
+  
   showLocationInfo () {
     el_infoContent.classList.remove('hide');
   }
@@ -112,7 +158,6 @@ class ViewModel {
 
   locationButton_onClick  () {
     var self = this;
-
     // Current location clicked again hides the info-content element
     if(viewModel.currLocation() === self) {
       el_infoContent.classList.toggle('hide');
@@ -127,33 +172,7 @@ class ViewModel {
   }
 
   
-  loadData_Wiki (wikiPage) {
-    var self = this;
-      var wikiurl = 'https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=' + wikiPage;
-      var $wikiElem = $('.location-info_content_wiki');
-
-      function addWikiToDom(wikiData) {
-        var pages = wikiData.query.pages;
-        var propertyNames = Object.keys(pages);
-        // The page name is its pageid, which is more or less unknown until runtime.
-        // Since only one page is in the response its allways on position [0]
-        $wikiElem.text(pages[propertyNames[0]].extract);
-      }
-
-      $.ajax({
-          url: wikiurl,
-          dataType: "jsonp",
-          success: function(response) {
-              addWikiToDom(response);
-          },
-          error: function() { 
-            $wikiElem.text('failed to get wikipedia resources');
-          },
-          complete: function() {
-            self.waitForAllResourcesAndShowLocationInfo();
-          }
-      });
-  }
+  
 
   // set max-height of the location-info_content-wiki element so it does not exceed the viewport
   setElementHeights () {
@@ -167,10 +186,7 @@ class ViewModel {
     viewModel.setElementHeights();
   }
 
-  addEventListeners () {
-    window.addEventListener('resize', this.onResizeWindow);
-  }
-
+  
   hideLocationInfo () {
     document.querySelector(".location-info").classList.add("hide");
     viewModel.currLocation(null);
@@ -185,8 +201,8 @@ var map;
 
 var initMap = function () {
 	map = new google.maps.Map(document.getElementById('map'), {
-	    center: {lat: 59.654159, lng: 12.584117},
-	    zoom: 13
+	    center: {lat: 58.475263, lng: 15.213411},
+	    zoom: 6
 	});
 
 	viewModel.init();

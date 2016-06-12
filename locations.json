@@ -1,50 +1,62 @@
 [
 	{
-		"lat": "59.657797",
-		"lng": "12.588455",
-		"title": "Shalom",
-		"description": "One of MANY pizzerias, and a really good one to.",
-		"url": "https://www.facebook.com/pages/Pizzabutik-Shalom/178808548803721",
-		"wikiPage": "Merlin",
+		"lat": "59.651525",
+		"lng": "12.621317",
+		"title": "Arvika festival",
+		"description": "My favorite festival",
+		"url": "none",
+		"wikiPage": "Arvika_Festival",
 		"flickrImg": {
-			"album": "72157663756796363",
-			"imgId": "25798718074"
+			"album": "72157667006546544",
+			"imgId": "3732513819"
 		}
 	},
 	{
-		"lat": "59.646433",
-		"lng": "12.604374",
-		"title": "Viksholmen",
-		"description": "Viksholmen. A green, beautiful place, where the surrounding water is the next best way to get wet.",
+		"lat": "57.696075",
+		"lng": "11.991835",
+		"title": "Liseberg",
+		"description": "Awesome amusement park in a beautiful city",
 		"url": "none",
-		"wikiPage": "Gandalf",
+		"wikiPage": "Liseberg",
 		"flickrImg": {
-			"album": "72157663756796363",
-			"imgId": "25798718074"
+			"album": "72157667006546544",
+			"imgId": "22511391902"
 		}
 	},
 	{
-		"lat": "59.668058",
-		"lng": "12.569063",
-		"title": "Prästängen",
-		"description": "Choose between 1.2 or 3.2 km lightweight tracks and run as many laps as you want.",
+		"lat": "56.12537",
+		"lng": "14.67962",
+		"title": "Sweden Rock",
+		"description": "We all just love rock :)",
 		"url": "none",
-		"wikiPage": "Gustaf_Fröding",
+		"wikiPage": "Sweden_Rock_Festival",
 		"flickrImg": {
-			"album": "72157667629657240",
-			"imgId": "4470979562"
+			"album": "72157667006546544",
+			"imgId": "16854883252"
 		}
 	},
 	{
-		"lat": "59.653912",
-		"lng": "12.607424",
-		"title": "Tennis court",
-		"description": "Arvika Tennisklubb has two courts indoors and six outside.",
+		"lat": "60.485603",
+		"lng": "15.436302",
+		"title": "Peace & Love",
+		"description": "Peaceful and lovely",
 		"url": "none",
-		"wikiPage": "Gustav_I_of_Sweden",
+		"wikiPage": "Peace_%26_Love_(festival)",
 		"flickrImg": {
-			"album": "72157663756796363",
-			"imgId": "25798718074"
+			"album": "72157667006546544",
+			"imgId": "7460281556"
+		}
+	},
+	{
+		"lat": "56.630686",
+		"lng": "15.540006",
+		"title": "Emmaboda festival",
+		"description": "Great line-up this year!",
+		"url": "none",
+		"wikiPage": "Emmaboda",
+		"flickrImg": {
+			"album": "72157667006546544",
+			"imgId": "104835342"
 		}
 	}
 ]

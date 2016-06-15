@@ -8,7 +8,7 @@ Project details is found [HERE](https://classroom.udacity.com/nanodegrees/nd001/
 
 The project repo is available at https://github.com/Moghan/neighborhood-map
 
-Have a look at the neighborhood-map sight at http://riots.se/neighborhood-map/
+Have a look at the neighborhood-map at http://riots.se/neighborhood-map/
 
 ## Getting started
 Install the bower-modules listed as dependencies in the bower.json file into the project folder. At the moment they are the following.

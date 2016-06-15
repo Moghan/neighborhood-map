@@ -34,6 +34,9 @@ html, body {
 	width: 240px;
 	max-width: 90%;
 }
+.side-nav #input-search{
+    width: 100%;
+}
 
 .side-nav_content {
     display: block;
@@ -41,7 +44,7 @@ html, body {
 
 .btn-location {
     width: 100%;
-    opacity: 0.65;
+    opacity: 0.75;
 }
 
 .btn-location:hover {
@@ -55,6 +58,7 @@ html, body {
     top: 0;
     z-index: 90;
     width: 320px;
+    max-width: 80%;
 }
 
 .location-info_content {
@@ -64,7 +68,7 @@ html, body {
 }
 
 .location-info_content_wiki {
-    margin: 5px 10px;
+    padding: 5px 10px;
     width: auto;
     overflow-y: auto;
 }
@@ -82,6 +86,15 @@ html, body {
 
 .location-info_content_flickr-img img {
     width: 100%;
+}
+
+.location-info_content_flickr-img_source {
+    position: fixed;
+    top: 5px;
+    right: 70px;
+    color: white;
+    font-size: small;
+    text-shadow: 1px 1px #000;
 }
 
 

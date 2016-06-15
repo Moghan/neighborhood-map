@@ -50,6 +50,9 @@
       <div class="location-info_content_flickr-img">
         <button class="js-info-toggle-btn location-info_hide-toggle material-icons" data-bind="event: { click: hideLocationInfo }">close</button>
         <img id="flickr-img" src="" alt="some image from flickr">
+        <a id="flickr-img-source-ID" href="" class="location-info_content_flickr-img_source" data-bind="style: { display: viewModel.flickrImgFound() ? '' : 'none'}">flickr source</a>
+
+
       </div>
       <div id="content-wiki-ID" class="location-info_content_wiki"></div>
     </div>

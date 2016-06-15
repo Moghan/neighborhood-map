@@ -7,7 +7,7 @@ var CONST = {
 var el_flickrImg = document.getElementById('flickr-img');
 var el_infoContent = document.getElementById('location-info-ID');
 var el_infoContentWiki = document.getElementById('content-wiki-ID');
-
+var el_flickrImgSource = document.getElementById('flickr-img-source-ID');
 
 class ViewModel {
   constructor () {
@@ -15,12 +15,15 @@ class ViewModel {
     this.searchString = ko.observable('');
     this.currLocation = ko.observable(null);
     this.flickrAndWiki_flag = false;
+    this.flickrImgFound = ko.observable(false);
 
     this.addEventListeners();
   }
 
+
   addEventListeners () {
     window.addEventListener('resize', this.onResizeWindow);
+    el_flickrImg.onload = function() { viewModel.setElementHeights() }
   }
 
 
@@ -66,7 +69,8 @@ class ViewModel {
       }
     });
 
-  }
+  }  
+
 
   loadData_Wiki (wikiPage) {
     var self = this;
@@ -97,33 +101,45 @@ class ViewModel {
     });
   }
 
-  loadFlickrImg (setId, picId) {
+
+  loadFlickrImg (flickrImgData) {
     var self = this;
 
     var URL = "https://api.flickr.com/services/rest/" + 
     "?method=flickr.galleries.getPhotos" +
     "&api_key=35ea935c9632cde77aec12c324007f6d" +
-    "&gallery_id=" + setId +
+    "&gallery_id=" + flickrImgData.album +
     "&format=json" +
     "&nojsoncallback=1";
 
+
     $.getJSON(URL, function(data) {
+      // a check that the flickr gallery was found
       if(data.stat === 'ok') {
         $.each(data.photos.photo, function(i, item) {
           var img_src = "http://farm" + item.farm + ".static.flickr.com/" +
             item.server + "/" + item.id + "_" + item.secret + "_n.jpg";
-          if(item.id == picId) {
+          if(item.id == flickrImgData.imgId) {
             el_flickrImg.src = img_src;
+            viewModel.flickrImgFound(true);
           }
         });
       }
       else {
         el_flickrImg.src = '';
+        viewModel.flickrImgFound(false);
       }
 
     })
-    .error( function () { el_flickrImg.alt = 'failed to get flickr resources'; el_flickrImg.src = '' })
-    .success( function () { el_flickrImg.alt = 'image from flickr' })
+    .error( function () {
+      el_flickrImg.alt = 'failed to get flickr resources';
+      el_flickrImg.src = '';
+      viewModel.flickrImgFound(false);
+    })
+    .success( function () {
+      el_flickrImg.alt = 'image from flickr';
+      el_flickrImgSource.href = flickrImgData.url;
+    })
     .complete( function () { self.waitForAllResourcesAndShowLocationInfo() });
 
   }
@@ -132,6 +148,7 @@ class ViewModel {
   mouseOver (location) {
     location.marker.setAnimation(google.maps.Animation.BOUNCE);
   }
+
 
   mouseOut (location) {
     if(location !== viewModel.currLocation())
@@ -143,18 +160,21 @@ class ViewModel {
     el_infoContent.classList.remove('hide');
   }
 
+
   // Shows location-info element after flickr and wiki data is collected
   // TODO: Must be better ways to do this. +Potential bug(what happens if another button is clicked before all data is collected)
   waitForAllResourcesAndShowLocationInfo () {
     if (this.flickrAndWiki_flag) {
-      this.setElementHeights();
+      
       this.showLocationInfo();
+      // this.setElementHeights();
       this.flickrAndWiki_flag = false;
     }
     else {
       this.flickrAndWiki_flag = true;
     }
   }
+
 
   locationButton_onClick  () {
     var self = this;
@@ -167,12 +187,10 @@ class ViewModel {
     else {
       viewModel.currLocation(self);
       viewModel.loadData_Wiki(self.wikiPage);
-      viewModel.loadFlickrImg(self.flickrImg.album, self.flickrImg.imgId);
+      viewModel.loadFlickrImg(self.flickrImg);
     }
   }
 
-  
-  
 
   // set max-height of the location-info_content-wiki element so it does not exceed the viewport
   setElementHeights () {
@@ -182,10 +200,11 @@ class ViewModel {
      el_infoContentWiki.style.maxHeight = (screenSize - imgHeight) + 'px';
   }
 
+
   onResizeWindow () {
     viewModel.setElementHeights();
   }
-
+  
   
   hideLocationInfo () {
     document.querySelector(".location-info").classList.add("hide");
@@ -198,11 +217,11 @@ var viewModel = new ViewModel();
 ko.applyBindings(viewModel);
 
 var map;
-
 var initMap = function () {
 	map = new google.maps.Map(document.getElementById('map'), {
 	    center: {lat: 58.475263, lng: 15.213411},
-	    zoom: 6
+	    zoom: 6,
+      disableDefaultUI: true
 	});
 
 	viewModel.init();

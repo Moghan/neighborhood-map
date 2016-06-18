@@ -1,0 +1,30 @@
+{
+  "name": "fend-p5-map-ver2.0",
+  "version": "1.0.0",
+  "description": "This is project 5 in my Front-End Developer Nanodegree program.",
+  "main": "app.js",
+  "dependencies": {
+    "gulp": "^3.9.1",
+    "jshint": "^2.9.2"
+  },
+  "devDependencies": {
+    "bootstrap": "^3.3.6",
+    "gulp-jshint": "^2.0.1",
+    "jquery": "^3.0.0",
+    "jshint-stylish": "^2.2.0",
+    "knockout": "^3.4.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Moghan/neighborhood-map.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Moghan/neighborhood-map/issues"
+  },
+  "homepage": "https://github.com/Moghan/neighborhood-map#readme"
+}

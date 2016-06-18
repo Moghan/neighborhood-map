@@ -75,9 +75,10 @@ html, body {
 
 .location-info_hide-toggle {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: 2px;
+    right: 2px;
     opacity: 0.7;
+    outline: 1px solid white;
 }
 
 .hide {
@@ -97,6 +98,14 @@ html, body {
     text-shadow: 1px 1px #000;
 }
 
+.map-error-message {
+    position: relative;
+    display: inline-block;
+    top: 100px;
+    left: 50px;
+    padding: 5px;
+    border: 5px solid red;
+}
 
 @media screen and (max-width: 768px) {
 	

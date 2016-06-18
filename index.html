@@ -11,10 +11,10 @@
   
   <meta name="theme-color" content="#FF00FF">
 
-  <title>Neighborhood map project</title>
+  <title>Neighborhood map</title>
 
   <!-- Bootstrap core CSS -->
-  <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="style.css">
@@ -25,14 +25,16 @@
 </head>
 
 <body>
-  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->           
-    <script src="bower_components/jquery/dist/jquery.min.js"></script> 
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->   
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>        
+  <!-- TODO: How do I change the version of jQuery downloaded with npm ?! -->
+  <!-- <script src="node_modules/jquery/dist/jquery.min.js"></script>  -->
 
   <!-- Include all compiled plugins (below), or include individual files as needed -->
-  <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 
   <!-- knockout (MVVM framework) -->
-  <script src="bower_components/knockout/dist/knockout.js"></script>
+  <script src="node_modules/knockout/build/output/knockout-latest.js"></script>
 
   <aside class="side-nav">
     <div class="side-nav_container">
@@ -45,16 +47,16 @@
     </div>
   </aside>
 
-  <aside id="location-info-ID" class="location-info hide">
+  <aside id="location-info-ID" class="location-info" data-bind="style: {display: showLocationInfo() ? '' : 'none' }">
     <div class="location-info_content" data-bind="style: { display: viewModel.currLocation() !== null ? '' : 'none'}">
       <div class="location-info_content_flickr-img">
         <button class="js-info-toggle-btn location-info_hide-toggle material-icons" data-bind="event: { click: hideLocationInfo }">close</button>
-        <img id="flickr-img" src="" alt="some image from flickr">
-        <a id="flickr-img-source-ID" href="" class="location-info_content_flickr-img_source" data-bind="style: { display: viewModel.flickrImgFound() ? '' : 'none'}">flickr source</a>
+        <img id="flickr-img" src="" alt="some image from flickr" data-bind="attr: { src: viewModel.currFlickrImageData().src, alt: viewModel.currFlickrImageData().alt }" onload="viewModel.setElementHeights()">
+        <a id="flickr-img-source-ID" href="" class="location-info_content_flickr-img_source" data-bind="attr: { href: viewModel.currFlickrImageData().href }, style: { display: viewModel.flickrImgFound() ? '' : 'none'}">flickr source</a>
 
 
       </div>
-      <div id="content-wiki-ID" class="location-info_content_wiki"></div>
+      <div id="content-wiki-ID" class="location-info_content_wiki" data-bind="style: { maxHeight: viewModel.maxheightWikiContentElement() }, text: viewModel.currWikiText()"></div>
     </div>
   </aside>
 
@@ -63,6 +65,9 @@
       <div id="main__container">
         <div class="map_container">
           <div id="map" class="map_canvas"></div>
+          <div class="map-error-message" data-bind="style: { display: viewModel.isGoogleMapError() ? '' : 'none' }">An error loading the google-map renders the page useless.
+            <button  id="reload-page-button" class="btn btn-primary" type="submit" onclick="viewModel.reloadPage()">Try again</button>
+          </div>
         </div>
       </div>
     </section>
@@ -72,10 +77,8 @@
   <script type="text/javascript" src="app.js"></script>
 
   <!--<script src="app.js"></script> -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjftopqzi-wMO-r5A2gtZb32WRMPI95WU&callback=initMap"
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjftopqzi-wMO-r5A2gtZb32WRMPI95WU&callback=initMap" onerror="viewModel.googleMapError()"
     async defer></script>
 </body>
-
-
 
 </html>

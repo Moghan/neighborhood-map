@@ -11,11 +11,14 @@ The project repo is available at https://github.com/Moghan/neighborhood-map
 Have a look at the neighborhood-map at http://riots.se/neighborhood-map/
 
 ## Getting started
-Install the bower-modules listed as dependencies in the bower.json file into the project folder. At the moment they are the following.
-* knockout
-* bootstrap
+Install the npm-modules listed as devDependencies in the package.json file into the project folder.
+(Check instructions on how to install and use npm at https://www.npmjs.com.)
+Running
+```bash
+  $> npm install
+  ```
+from project folder, where package.json is located, will install the listed modules.
 
-(Check out the awesomeness of Bower at https://bower.io/)
 
 Run on a local server using Python.
 ```bash

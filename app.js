@@ -25,6 +25,8 @@ class ViewModel {
 
     this.currLocation = ko.observable(null);
 
+    this.markerArray = new Array()
+
     this.addEventListeners();
   }
 
@@ -46,10 +48,6 @@ class ViewModel {
  * Each location item is set up with some KO variables that connects with the view.
  */
   init () {
-    var loadRequestTimeout = setTimeout(function() {
-      console.log('failed to get AJAX resources');
-    }, 2000);
-
     var Item = function(data) {
       this.lat =  data.lat;
       this.lng = data.lng;
@@ -69,12 +67,14 @@ class ViewModel {
       // When this.show changes, this computed observable hides or shows the locations google-map-marker
       this.showMarker = ko.computed(() => { this.show() ? this.marker.setMap(map) : this.marker.setMap(null);}, this);
       this.flickrImg = data.flickrImg;
+      // TODO Q: This line of code can´t be optimal
+      this.marker.addListener('click', function(e) { viewModel.marker_onclick(this); });
     };
 
     Item.prototype.stopMarkerAnimation = function () {
       this.marker.setAnimation(null);
     };
-    
+        
     // In the old version every item had its own computed observable to track if was the current location.
     // Now all items share this function and the stopMarkerAnimation() function instead. PS. Thank you reviewer for the devtip :)
     Item.prototype.animateMarker =  ko.computed(() => { viewModel.currLocation() !== null ? viewModel.currLocation().marker.setAnimation(google.maps.Animation.BOUNCE) : null; }, this);
@@ -83,16 +83,29 @@ class ViewModel {
     $.ajax({
       url: CONST.url_locations,
       dataType: "json",
-      success: function(response) {
-        var arr = response.map(function(item) { return new Item(item); });
-        arr.forEach(function(item){ viewModel.locations.push(item); });
-
-        clearTimeout(loadRequestTimeout);
-      }
+      timeout: 2000
+    })
+    .fail(function() {
+      alert('failed to load the locations.json file');
+    })
+    .done(function(response) {
+      var arr = response.map(function(item) { return new Item(item); });
+      arr.forEach(function(item){ viewModel.locations.push(item); });
     });
 
     this.setElementHeights();
   }  
+
+/**
+* Checks which items marker was clicked and then calls changeCurrentLocation(...)
+* @param {google.map.marker} marker - the clicked marker
+*/
+  marker_onclick(marker) {
+    viewModel.locations().forEach( function(item) {
+      if(marker === item.marker)
+        viewModel.changeCurrentLocation(item);
+    });
+  }
 
 /**
 * Loads a wikipage and set up a KO variable with the pages main text.
@@ -106,17 +119,21 @@ class ViewModel {
     $.ajax({
         url: wikiurl,
         dataType: "jsonp",
-        success: function(response) {
-          var pages = response.query.pages;
-          var propertyNames = Object.keys(pages);
-          self.currWikiText(pages[propertyNames[0]].extract);
-        },
-        error: function() { 
-          self.currWikiText('failed to get wikipedia resources');
-        },
-        complete: function() {
-          self.waitForAllResourcesAndShowLocationInfo();
-        }
+        timeout: 2000
+    })
+    .done(function(response) {
+      var pages = response.query.pages;
+      var propertyNames = Object.keys(pages);
+      if(propertyNames[0] !== '-1')
+        self.currWikiText(pages[propertyNames[0]].extract);
+      else
+        self.currWikiText('requested page not found on wikipedia');
+    })
+    .fail(function() {
+      self.currWikiText('failed to get wikipedia resource');
+    })
+    .always(function() {
+      self.waitForAllResourcesAndShowLocationInfo();
     });
   }
 
@@ -203,12 +220,12 @@ class ViewModel {
   }
 
 /**
-* Sets viewModel.currLocation() to clicked location and/or sets viewModel.showLocationInfo()
+* Sets viewModel.currLocation() to item and/or sets viewModel.showLocationInfo()
+* @param {Item} item - location item
 */
-  locationButton_onClick  () {
-    var self = this;
-    // Current location clicked again hides the info-content element
-    if(viewModel.currLocation() === self) {
+  changeCurrentLocation (item) {
+    // Item already current location: hide the info-content element
+    if(viewModel.currLocation() === item) {
       if(viewModel.showLocationInfo())
         viewModel.showLocationInfo(false);
       else
@@ -218,10 +235,17 @@ class ViewModel {
     }
     // Else, new current location is set and resources called for
     else {
-      viewModel.currLocation(self);
-      viewModel.loadData_Wiki(self.wikiPage);
-      viewModel.loadFlickrImg(self.flickrImg);
+      viewModel.currLocation(item);
+      viewModel.loadData_Wiki(item.wikiPage);
+      viewModel.loadFlickrImg(item.flickrImg);
     }
+  }
+
+/**
+* Calls changeCurrentLocation with clicked item as parameter
+*/
+  locationButton_onClick  () {
+    viewModel.changeCurrentLocation(this);
   }
 
 /**

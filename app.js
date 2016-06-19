@@ -22,10 +22,7 @@ class ViewModel {
     this.showLocationInfo = ko.observable(false);
     this.maxheightWikiContentElement = ko.observable(0);
     this.currFlickrImageData = ko.observable({ 'href': null, 'src': null, 'alt': null });
-
     this.currLocation = ko.observable(null);
-
-    this.markerArray = new Array()
 
     this.addEventListeners();
   }
